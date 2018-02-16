@@ -7,3 +7,5 @@ RWin::Del ; right command to forward delete
 LWin::LAlt ; left command to alt
 LAlt::LWin ; left alt to command (windows key)
 CapsLock::Escape
+F1::Pause
+Ctrl & F1::CtrlBreak
