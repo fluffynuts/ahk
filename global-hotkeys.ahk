@@ -49,6 +49,10 @@ return
 Run, %audacious% --fwd
 return
 
-!+t::
-Run, *RunAs "C:\Users\davyd.mccoll\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\ZEIT`, Inc\Hyper.lnk"
+^+`::
+Run, *RunAs "C:\Program Files\ConEmu\ConEmu64.exe", %USERPROFILE%, Max
+return
+
+#Space::
+Send #~
 return
