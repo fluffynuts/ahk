@@ -33,10 +33,17 @@ return
 ; terminal
 ^+`::
 ;Run, *RunAs "C:\Program Files\ConEmu\ConEmu64.exe", %USERPROFILE%, Max
-;Run, *RunAs "C:\Users\davyd.mccoll\AppData\Local\Programs\Terminus\Terminus.exe"
-;Run, *RunAs "C:\Users\davyd.mccoll\AppData\Local\hyper\app-3.0.2\Hyper.exe" 
+;Run, *RunAs "C:\Users\davyd\AppData\Local\Programs\Terminus\Terminus.exe"
+;Run, *RunAs "C:\Users\davyd\AppData\Local\hyper\app-3.0.2\Hyper.exe" 
 ;Run, *RunAs "C:\apps\term\WindowsTerminal.exe"
-Run, *RunAs "C:\Users\davyd.mccoll\scoop\apps\windows-terminal\current\WindowsTerminal.exe"
+Run, *RunAs "C:\Users\davyd\scoop\apps\windows-terminal\current\WindowsTerminal.exe", %USERPROFILE%, Max
+return
+
+!^+Space::
+;Run "C:\Users\davyd\Documents\Mail.lnk"
+Run "C:\Program Files\Mailbird\Mailbird.exe"
+;Run "C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe"
+WinActivate ahk_exe Mailbird.exe
 return
 
 !^+~::
@@ -45,7 +52,9 @@ return
 
 ; slack
 !+s::
-Run C:\apps\win-store-apps\slack
+Run "C:\Users\davyd\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Slack Technologies Inc\Slack.lnk"
+;Run "C:\Users\davyd\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Scoop Apps\Slack.lnk"
+WinActivate ahk_exe Slack.exe
 return
 
 !+m::
