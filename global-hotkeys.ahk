@@ -22,6 +22,8 @@ CheckScriptUpdate() {
         } ; loops reload on "Retry"
     }
 }
+audtool = "C:\Program Files (x86)\Audacious\bin\audtool.exe"
+audtool_play_pause = "C:\Program Files (x86)\Audacious\bin\audtool-play-pause.py"
 
 return
 ; reminder:
@@ -33,14 +35,31 @@ return
 ; terminal
 ^+`::
 Run, *RunAs "C:\Users\davyd\scoop\apps\windows-terminal\current\WindowsTerminal.exe", %USERPROFILE%, Max
+;Run "C:\Users\davyd\scoop\apps\windows-terminal\current\WindowsTerminal.exe", %USERPROFILE%, Max
 return
 
 !^+Space::
+; Mailbird
 if WinExist("ahk_exe Mailbird.exe")
     WinActivate ahk_exe Mailbird.exe
 else
     Run "C:\Program Files\Mailbird\Mailbird.exe"
 return
+
+; EMClient
+; if WinExist("ahk_exe MailClient.exe")
+;     WinActivate ahk_exe MailClient.exe
+; else
+;     Run "C:\Program Files (x86)\eM Client\MailClient.exe"
+; return
+
+; Thunderbird
+; if WinExist("ahk_exe Thunderbird.exe")
+;     WinActivate ahk_exe Thunderbird.exe
+; else
+;     Run "C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe"
+; return
+
 
 !^+~::
 Run cmd.exe
@@ -54,9 +73,46 @@ else
     Run "C:\Users\davyd\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Slack Technologies Inc\Slack.lnk"
 return
 
-!+m::
-Run "C:\Program Files\Mailbird\Mailbird.exe"
+; signal
+!+d::
+if WinExist("ahk_exe Discord.exe")
+    WinActivate ahk_exe Discord.exe
+else
+    Run "C:\Users\davyd\scoop\apps\discord\current\Discord.exe"
 return
+
+; audacious hotkeys via audtool
+!+z::
+Run, %audtool% --playlist-reverse, %USERPROFILE%, Hide
+return
+
+!+x::
+; Run, %audtool% --playlist-pause, %USERPROFILE%, Hide
+Run, %audtool_play_pause%, %USERPROFILE%, Hide
+return
+
+!+c::
+Run, %audtool% --jumptofile-show, %USERPROFILE%, Hide
+WinActivate Jump to Song
+return
+
+!+v::
+Run, %audtool% --playback-stop, %USERPROFILE%, Hide
+return
+
+!+b::
+Run, %audtool% --playlist-advance, %USERPROFILE%, Hide
+return
+
+MsgBox % RunWaitOne("dir " A_ScriptDir)
+
+
+RunWaitOne(command) {
+    shell := ComObjCreate("WScript.Shell")
+    exec := shell.Exec(ComSpec " /C " command)
+    return exec.StdOut.ReadAll()
+}
+
 
 ; Windows desktop hotkeys
 ; Globals
