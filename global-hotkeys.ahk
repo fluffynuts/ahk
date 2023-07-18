@@ -32,33 +32,57 @@ return
 ; ^ -> CTRL
 ; + -> SHIFT
 
+; ctrl-w to close more things
+;^w::
+;if WinActive("ahk_exe Discord.exe")
+;	WinClose
+;else
+;	Send {Ctrl Down}{w}{Ctrl up}
+;return
+#IfWinActive ahk_exe discord.exe
+^W::Winclose
+#IfWinActive
+
+;~!+c::
+;Run "C:\Users\davyd.mccoll\AppData\Local\Programs\cron-web\Cron.exe
+;return
+
 ; terminal
 ^+`::
-Run, *RunAs "C:\Users\davyd\scoop\apps\windows-terminal\current\WindowsTerminal.exe", %USERPROFILE%, Max
-;Run "C:\Users\davyd\scoop\apps\windows-terminal\current\WindowsTerminal.exe", %USERPROFILE%, Max
+if WinExist("ahk_exe WindowsTerminal.exe")
+	WinActivate ahk_exe WindowsTerminal.exe
+else
+	Run, "C:\apps\shortcuts\Terminal.lnk", %USERPROFILE%, Max
 return
 
 !^+Space::
-; Mailbird
-if WinExist("ahk_exe Mailbird.exe")
+; Email
+;if WinExist("ahk_exe Thunderbird.exe") {
+;    WinActivate ahk_exe Thunderbird.exe
+;} else {
+;    Run, "C:\Program Files\Mozilla Thunderbird\thunderbird.exe"
+;}
+
+if WinExist("ahk_exe Mailbird.exe") {
     WinActivate ahk_exe Mailbird.exe
-else
-    Run "C:\Program Files\Mailbird\Mailbird.exe"
-return
+} else {
+    Run, "C:\Program Files\Mailbird\Mailbird.exe"
+}
 
-; EMClient
-; if WinExist("ahk_exe MailClient.exe")
-;     WinActivate ahk_exe MailClient.exe
-; else
-;     Run "C:\Program Files (x86)\eM Client\MailClient.exe"
-; return
+;if WinExist("ahk_exe MailbirdAlpha.exe") {
+;    WinActivate ahk_exe MailbirdAlpha.exe
+;} else {
+;    Run, "C:\Program Files\MailbirdAlpha\MailbirdAlpha.exe"
+;}
+;if WinExist("ahk_exe Mailspring.exe")
+;    WinActivate ahk_exe Mailspring.exe
+;else
+;    Run, "C:\Users\davyd.mccoll\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Foundry 376`, LLC\Mailspring.lnk"
+;return
 
-; Thunderbird
-; if WinExist("ahk_exe Thunderbird.exe")
-;     WinActivate ahk_exe Thunderbird.exe
-; else
-;     Run "C:\Program Files (x86)\Mozilla Thunderbird\thunderbird.exe"
-; return
+; horizontal scrolling with shift-scroll
+#WheelDown::WheelRight
+#WheelUp::WheelLeft
 
 
 !^+~::
@@ -66,53 +90,141 @@ Run cmd.exe
 return
 
 ; slack
-!+s::
+!+^s::
 if WinExist("ahk_exe Slack.exe")
     WinActivate ahk_exe Slack.exe
 else
-    Run "C:\Users\davyd\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Slack Technologies Inc\Slack.lnk"
+    Run "C:\Users\davyd.mccoll\AppData\Local\slack\slack.exe"
 return
 
-; signal
-!+d::
+; firefox
+!+^f::
+if WinExist("ahk_exe firefox.exe")
+    WinActivate ahk_exe firefox.exe
+else
+    Run "C:\Program Files\Firefox Nightly\firefox.exe"
+return
+
+; edge
+!+^e::
+if WinExist("ahk_exe msedge.exe")
+    WinActivate ahk_exe msedge.exe
+else
+    Run "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+return
+
+; discord
+!+^d::
 if WinExist("ahk_exe Discord.exe")
     WinActivate ahk_exe Discord.exe
 else
-    Run "C:\Users\davyd\scoop\apps\discord\current\Discord.exe"
+    Run "C:\Users\davyd.mccoll\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Discord Inc\Discord.lnk"
 return
 
-; audacious hotkeys via audtool
+; Get the HWND of the Spotify main window.
+getSpotifyHwnd() {
+	WinGet, spotifyHwnd, ID, ahk_exe spotify.exe
+	Return spotifyHwnd
+}
+
+; Send a key to Spotify.
+spotifyKey(key) {
+	spotifyHwnd := getSpotifyHwnd()
+	; Chromium ignores keys when it isn't focused.
+	; Focus the document window without bringing the app to the foreground.
+	ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %spotifyHwnd%
+	ControlSend, , %key%, ahk_id %spotifyHwnd%
+	Return
+}
+
+YTM := "YouTube Music Desktop App.exe"
+getYTMHwnd() {
+    WinGet, result, ID, ahk_exe %YTM%
+    return result
+}
+
+ytmKey(key) {
+    hwnd := getYTMHwnd()
+    ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %hwnd%
+    ControlSend, , %key%, ahk_id %hwnd%
+    return
+}
+
+; Spotify keys / audacious hotkeys via audtool
+; << prev
 !+z::
-Run, %audtool% --playlist-reverse, %USERPROFILE%, Hide
+if WinExist("ahk_exe audacious.exe") {
+    Run, %audtool% --playlist-reverse, %USERPROFILE%, Hide
+} else if WinExist("ahk_exe Spotify.exe") {
+    spotifyKey("^{Left}")
+} else if WinExist("ahk_exe %YTM%") {
+    ytmKey("^+!Z")
+} else {
+    SendInput !+z
+}
 return
 
+; |> play/pause
 !+x::
-; Run, %audtool% --playlist-pause, %USERPROFILE%, Hide
-Run, %audtool_play_pause%, %USERPROFILE%, Hide
+if WinExist("ahk_exe audacious.exe") {
+    Run, %audtool_play_pause%, %USERPROFILE%, Hide
+} else if WinExist("ahk_exe Spotify.exe") {
+    spotifyKey("{Space}")
+} else {
+    SendInput !+x
+}
 return
 
+; search
 !+c::
-Run, %audtool% --jumptofile-show, %USERPROFILE%, Hide
-WinActivate Jump to Song
+if WinExist("ahk_exe audacious.exe") {
+    Run, %audtool% --jumptofile-show, %USERPROFILE%, Hide
+    Sleep, 1000
+    WinActivate, "Jump to Song"
+} else if WinExist("ahk_exe Spotify.exe") {
+    ; spotifyKey("^L")
+    ; Sleep, 1000
+    WinActivate, ahk_exe Spotify.exe
+    Sleep, 100
+    spotifyKey("^L")
+} else {
+    SendInput !+c
+}
 return
 
 !+v::
-Run, %audtool% --playback-stop, %USERPROFILE%, Hide
+if WinExist("ahk_exe audacious.exe") {
+    Run, %audtool% --playback-stop, %USERPROFILE%, Hide
+} else if WinExist("ahk_exe Spotify.exe") {
+    ; like many dumbass modern players, there's no concept of "stop"
+} else {
+    SendInput !+v
+}
 return
 
 !+b::
-Run, %audtool% --playlist-advance, %USERPROFILE%, Hide
+if WinExist("ahk_exe audacious.exe") {
+    Run, %audtool% --playlist-advance, %USERPROFILE%, Hide
+} else if WinExist("ahk_exe Spotify.exe") {
+    spotifyKey("^{Right}")
+} else {
+    SendInput !+b
+}
 return
 
-MsgBox % RunWaitOne("dir " A_ScriptDir)
-
+!+^}::
+if WinExist("ahk_exe Spotify.exe") {
+    spotifyKey("!+B")
+} else {
+    SendInput !+^}
+}
+return
 
 RunWaitOne(command) {
     shell := ComObjCreate("WScript.Shell")
     exec := shell.Exec(ComSpec " /C " command)
     return exec.StdOut.ReadAll()
 }
-
 
 ; Windows desktop hotkeys
 ; Globals
