@@ -121,44 +121,11 @@ else
     Run "C:\Users\davyd.mccoll\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Discord Inc\Discord.lnk"
 return
 
-; Get the HWND of the Spotify main window.
-getSpotifyHwnd() {
-	WinGet, spotifyHwnd, ID, ahk_exe spotify.exe
-	Return spotifyHwnd
-}
-
-; Send a key to Spotify.
-spotifyKey(key) {
-	spotifyHwnd := getSpotifyHwnd()
-	; Chromium ignores keys when it isn't focused.
-	; Focus the document window without bringing the app to the foreground.
-	ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %spotifyHwnd%
-	ControlSend, , %key%, ahk_id %spotifyHwnd%
-	Return
-}
-
-YTM := "YouTube Music Desktop App.exe"
-getYTMHwnd() {
-    WinGet, result, ID, ahk_exe %YTM%
-    return result
-}
-
-ytmKey(key) {
-    hwnd := getYTMHwnd()
-    ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %hwnd%
-    ControlSend, , %key%, ahk_id %hwnd%
-    return
-}
-
-; Spotify keys / audacious hotkeys via audtool
+; music player global keys
 ; << prev
 !+z::
 if WinExist("ahk_exe audacious.exe") {
     Run, %audtool% --playlist-reverse, %USERPROFILE%, Hide
-} else if WinExist("ahk_exe Spotify.exe") {
-    spotifyKey("^{Left}")
-} else if WinExist("ahk_exe %YTM%") {
-    ytmKey("^+!Z")
 } else {
     SendInput !+z
 }
@@ -168,8 +135,6 @@ return
 !+x::
 if WinExist("ahk_exe audacious.exe") {
     Run, %audtool_play_pause%, %USERPROFILE%, Hide
-} else if WinExist("ahk_exe Spotify.exe") {
-    spotifyKey("{Space}")
 } else {
     SendInput !+x
 }
@@ -181,12 +146,6 @@ if WinExist("ahk_exe audacious.exe") {
     Run, %audtool% --jumptofile-show, %USERPROFILE%, Hide
     Sleep, 1000
     WinActivate, "Jump to Song"
-} else if WinExist("ahk_exe Spotify.exe") {
-    ; spotifyKey("^L")
-    ; Sleep, 1000
-    WinActivate, ahk_exe Spotify.exe
-    Sleep, 100
-    spotifyKey("^L")
 } else {
     SendInput !+c
 }
@@ -195,8 +154,6 @@ return
 !+v::
 if WinExist("ahk_exe audacious.exe") {
     Run, %audtool% --playback-stop, %USERPROFILE%, Hide
-} else if WinExist("ahk_exe Spotify.exe") {
-    ; like many dumbass modern players, there's no concept of "stop"
 } else {
     SendInput !+v
 }
@@ -205,18 +162,8 @@ return
 !+b::
 if WinExist("ahk_exe audacious.exe") {
     Run, %audtool% --playlist-advance, %USERPROFILE%, Hide
-} else if WinExist("ahk_exe Spotify.exe") {
-    spotifyKey("^{Right}")
 } else {
     SendInput !+b
-}
-return
-
-!+^}::
-if WinExist("ahk_exe Spotify.exe") {
-    spotifyKey("!+B")
-} else {
-    SendInput !+^}
 }
 return
 
