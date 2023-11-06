@@ -57,17 +57,17 @@ return
 
 !^+Space::
 ; Email
-;if WinExist("ahk_exe Thunderbird.exe") {
-;    WinActivate ahk_exe Thunderbird.exe
-;} else {
-;    Run, "C:\Program Files\Mozilla Thunderbird\thunderbird.exe"
-;}
-
-if WinExist("ahk_exe Mailbird.exe") {
-    WinActivate ahk_exe Mailbird.exe
+if WinExist("ahk_exe Thunderbird.exe") {
+    WinActivate ahk_exe Thunderbird.exe
 } else {
-    Run, "C:\Program Files\Mailbird\Mailbird.exe"
+    Run, "C:\Program Files\Mozilla Thunderbird\thunderbird.exe"
 }
+
+;if WinExist("ahk_exe Mailbird.exe") {
+;    WinActivate ahk_exe Mailbird.exe
+;} else {
+;    Run, "C:\Program Files\Mailbird\Mailbird.exe"
+;}
 
 ;if WinExist("ahk_exe MailbirdAlpha.exe") {
 ;    WinActivate ahk_exe MailbirdAlpha.exe
