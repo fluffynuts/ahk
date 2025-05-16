@@ -2,11 +2,13 @@
 ; thanks to : https://stackoverflow.com/questions/45468335/automatically-reload-autohotkey-script-when-modified#45488494
 ; TODO: this really should be something which could be #include'd
 ;   which exports a single function to do this work.
+Menu, Tray, Icon, global.ico
 #SingleInstance force
 FileGetTime ScriptStartModTime, %A_ScriptFullPath%
 SetTimer CheckScriptUpdate, 100, 0x7FFFFFFF ; 100 ms, highest priority
 
 CheckScriptUpdate() {
+    ; StartTaskManagerMinizedIfNotRunning()
     global ScriptStartModTime
     FileGetTime curModTime, %A_ScriptFullPath%
     If (curModTime <> ScriptStartModTime) {
@@ -20,6 +22,14 @@ CheckScriptUpdate() {
             IfMsgBox Ignore
                 break
         } ; loops reload on "Retry"
+    }
+}
+
+StartTaskManagerMinizedIfNotRunning() {
+    Process, Exist, taskmgr
+    if ErrorLevel <> 0
+    {
+        Run, taskmgr.exe, Min
     }
 }
 audtool = "C:\Program Files (x86)\Audacious\bin\audtool.exe"
@@ -39,20 +49,21 @@ return
 ;else
 ;	Send {Ctrl Down}{w}{Ctrl up}
 ;return
-#IfWinActive ahk_exe discord.exe
-^W::Winclose
-#IfWinActive
 
 ;~!+c::
 ;Run "C:\Users\davyd.mccoll\AppData\Local\Programs\cron-web\Cron.exe
 ;return
+
+!^+P::
+Run, taskmgr.exe, , min
+return
 
 ; terminal
 ^+`::
 if WinExist("ahk_exe WindowsTerminal.exe")
 	WinActivate ahk_exe WindowsTerminal.exe
 else
-	Run, "C:\apps\shortcuts\Terminal.lnk", %USERPROFILE%, Max
+	Run, "%LocalAppData%\Microsoft\WindowsApps\wt.exe", %USERPROFILE%, Max
 return
 
 !^+Space::
@@ -94,7 +105,14 @@ return
 if WinExist("ahk_exe Slack.exe")
     WinActivate ahk_exe Slack.exe
 else
-    Run "C:\Users\davyd.mccoll\AppData\Local\slack\slack.exe"
+    Run "C:\Program Files\Slack\slack.exe"
+return
+
+!+^v::
+if WinExist("ahk_exe vlc.exe")
+    WinActivate ahk_exe vlc.exe
+else
+    Run "C:\Program Files\VideoLAN\VLC\vlc.exe"
 return
 
 ; firefox
@@ -102,7 +120,7 @@ return
 if WinExist("ahk_exe firefox.exe")
     WinActivate ahk_exe firefox.exe
 else
-    Run "C:\Program Files\Firefox Nightly\firefox.exe"
+    Run "C:\Program Files\Firefox Developer Edition\firefox.exe"
 return
 
 ; edge
